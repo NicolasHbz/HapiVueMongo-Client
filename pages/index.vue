@@ -1,58 +1,115 @@
 <template>
-  <section class="container">
-    <div>
-      <logo/>
-      <h1 class="title">
-        hapi_vue_mongo_client
-      </h1>
-      <h2 class="subtitle">
-        Nuxt.js project
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">Documentation</a>
-        <a href="https://github.com/nuxt/nuxt.js" target="_blank" class="button--grey">GitHub</a>
+  <div class="wrapper">
+    <div class="form-container">
+      <div class="panel-heading">
+        <h3 class="panel-title">Please sign in</h3>
       </div>
+      <b-form v-if="!$store.state.authUser" @submit.prevent="login">
+        <b-form-group id="exampleInputGroup1"
+                      label="Your Name:" label-for="exampleInput1">
+          <b-form-input id="exampleInput1"
+                        v-model="formUsername"
+                        type="text" required
+                        placeholder="Enter name"
+          ></b-form-input>
+        </b-form-group>
+
+        <b-form-group id="exampleInputGroup2"
+                      label="Password :" label-for="exampleInput2"
+                      description="We'll never share your email with anyone else.">
+          <b-form-input id="exampleInput2"
+                        v-model="formPassword"
+                        type="password" required
+                        placeholder="Enter password"
+          ></b-form-input>
+        </b-form-group>
+
+        <div class="link-container">
+          <nuxt-link to="/register">Don't have an account ?</nuxt-link>
+        </div>
+
+        <b-form-group id="exampleGroup4">
+          <b-form-checkbox id="exampleInput4">
+            Remember me
+          </b-form-checkbox>
+        </b-form-group>
+
+
+        <div class="button-container">
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-button type="reset" variant="secondary">Reset</b-button>
+        </div>
+
+      </b-form>
     </div>
-  </section>
+  </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo.vue'
-
 export default {
-  components: {
-    Logo
+  data () {
+    return {
+      formError: null,
+      formUsername: '',
+      formPassword: ''
+    }
+  },
+  methods: {
+    async login () {
+      try {
+        await this.$store.dispatch('login', {
+          username: this.formUsername,
+          password: this.formPassword
+        })
+        this.formUsername = ''
+        this.formPassword = ''
+        this.formError = null
+        this.$router.push('/home')
+      } catch (e) {
+        this.formError = e.message
+      }
+    },
+    async logout () {
+      try {
+        await this.$store.dispatch('logout')
+      } catch (e) {
+        this.formError = e.message
+      }
+    }
   }
 }
 </script>
 
 <style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
+  .wrapper{
+    height: 400px;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.title {
-  font-family: "Quicksand", "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 1 */
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
+  .form-container {
+    width: 20%;
+    height: 300px;
+  }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
+  .button-container{
+    display: flex;
+    justify-content: space-between;
+  }
 
-.links {
-  padding-top: 15px;
-}
+  .link-container{
+    margin-bottom: 10px;
+  }
+
+  .btn-primary{
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+
+  .btn-primary:hover{
+    background-color: #138496;
+    border-color: #117a8b;
+  }
 </style>

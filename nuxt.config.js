@@ -1,3 +1,6 @@
+const bodyParser = require('body-parser')
+const session = require('express-session')
+
 module.exports = {
   /*
   ** Headers of the page
@@ -21,9 +24,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    /*
-    ** Run ESLint on save
-    */
+    vendor: ['axios'],
     extend (config, ctx) {
       if (ctx.dev && ctx.isClient) {
         config.module.rules.push({
@@ -34,5 +35,22 @@ module.exports = {
         })
       }
     }
-  }
+  },
+  modules: [
+    'bootstrap-vue/nuxt'
+  ],
+  serverMiddleware: [
+  // body-parser middleware
+    bodyParser.json(),
+    // session middleware
+    session({
+      secret: 'super-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 60000 }
+    }),
+    // Api middleware
+    // We add /api/login & /api/logout routes
+    '~/api'
+  ]
 }
